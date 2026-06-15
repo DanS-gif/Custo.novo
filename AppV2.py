@@ -1574,7 +1574,7 @@ def aba_resultados() -> None:
 
 
 # ─── J.5  Aba 4: Proposta PDF + Admin JSON ────────────────────────────────
- def tx(texto: str) -> str:
+def tx(texto: str) -> str:
         """Sanitiza texto para compatibilidade com fpdf2 sem fontes externas."""
         texto = str(texto)
         substituicoes = {
