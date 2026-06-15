@@ -5,7 +5,7 @@ MVP v2.0  |  Stack: Streamlit · Pandas · st-aggrid · Matplotlib · fpdf2 · J
 
 Arquitetura em blocos lógicos:
   [A] Imports e Configuração de Página
-  [B] CSS Blueprint Dark Theme
+  [B] CSS Premium Tech Dark Mode 
   [C] Constantes e Dados-Padrão
   [D] Gestão do sugestoes_mercado.json
   [E] Inicialização do Session State
@@ -49,52 +49,273 @@ st.set_page_config(
 
 CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
 
-.stApp { background-color: #f8fafc; color: #0f172a; }
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
 
-/* ── Header Métrica ── */
+/* ── Background global com grid técnico ── */
+.stApp {
+    background-color: #0a0a0a;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: #a3a3a3;
+}
+
+/* ── Header com Glow laranja ── */
 .oc-header {
-    background: #ffffff;
-    border: 1px solid #e2e8f0; border-radius: 12px;
-    padding: 32px 40px; margin-bottom: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(249,115,22,0.15) 0%, transparent 60%),
+        #111111;
+    border: 1px solid #262626;
+    border-radius: 16px;
+    padding: 32px 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.oc-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
 }
 .oc-header h1 {
-    font-family: 'Inter', sans-serif; font-size: 2.8rem; font-weight: 800;
-    color: #0f172a; letter-spacing: -1.2px; margin: 0; line-height: 1.1;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #fafafa;
+    letter-spacing: -0.5px;
+    margin: 0;
+    position: relative;
 }
-.oc-header h1 span { color: #2563eb; } /* Ponto azul estilo SaaS */
-.oc-header p { color: #64748b; margin: 8px 0 0; font-size: 1.05rem; font-weight: 400; letter-spacing: -0.2px;}
+.oc-header h1 .accent { color: #f97316; }
+.oc-header p {
+    color: #525252;
+    margin: 6px 0 0;
+    font-size: 0.88rem;
+    letter-spacing: 0.2px;
+    position: relative;
+}
 
 /* ── Metric cards ── */
 .oc-card {
-    background: #ffffff; border: 1px solid #e2e8f0;
-    border-left: 4px solid #2563eb; border-radius: 10px;
-    padding: 20px; margin: 8px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 6px 0;
+    transition: border-color 0.2s ease;
 }
-.oc-card .lbl { font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; }
-.oc-card .val { font-family: 'JetBrains Mono', monospace; font-size: 1.9rem; font-weight: 700; color: #0f172a; margin-top: 4px; letter-spacing: -1px;}
-.oc-card .sub { font-size: 0.8rem; color: #10b981; margin-top: 4px; font-weight: 500; }
+.oc-card:hover { border-color: #404040; }
+.oc-card .lbl {
+    font-size: 0.72rem;
+    color: #525252;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
+.oc-card .val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #fafafa;
+    line-height: 1.2;
+    margin-top: 4px;
+}
+.oc-card .sub {
+    font-size: 0.76rem;
+    color: #f97316;
+    margin-top: 4px;
+    font-weight: 500;
+}
 
-/* ── Abas e Inputs ── */
-.stTabs [data-baseweb="tab-list"] { background: transparent; border-bottom: 2px solid #e2e8f0; gap: 24px; }
+/* ── Suggestion cards ── */
+.sug-card {
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 20px;
+    height: 100%;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.sug-card:hover {
+    border-color: #f97316;
+    transform: translateY(-2px);
+}
+.sug-card h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #fafafa;
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.sug-card .badge {
+    display: inline-block;
+    background: rgba(249,115,22,0.1);
+    border: 1px solid rgba(249,115,22,0.25);
+    color: #f97316;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.70rem;
+    font-weight: 500;
+    margin: 3px 2px 0;
+}
+.sug-card p {
+    color: #737373;
+    font-size: 0.83rem;
+    line-height: 1.6;
+    margin: 8px 0 6px;
+}
+
+/* ── Abas ── */
+.stTabs [data-baseweb="tab-list"] {
+    background: transparent;
+    border-bottom: 1px solid #262626;
+    gap: 0;
+}
 .stTabs [data-baseweb="tab"] {
-    background: transparent; color: #64748b; border: none; padding: 12px 4px;
-    font-weight: 500; font-size: 0.95rem; font-family: 'Inter', sans-serif;
+    background: transparent;
+    color: #525252;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: color 0.15s ease;
 }
-.stTabs [aria-selected="true"] { color: #2563eb !important; border-bottom: 2px solid #2563eb !important; background: transparent !important; }
+.stTabs [data-baseweb="tab"]:hover { color: #a3a3a3; }
+.stTabs [aria-selected="true"] {
+    background: transparent !important;
+    color: #fafafa !important;
+    border-bottom: 2px solid #f97316 !important;
+}
 
-.stNumberInput input, .stTextInput input { border-radius: 8px !important; border: 1px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important;}
-.stDownloadButton button, .stButton button {
-    background: #2563eb !important; color: #ffffff !important;
-    border: none !important; border-radius: 8px !important;
-    font-weight: 500 !important; font-family: 'Inter', sans-serif !important;
+/* ── Inputs ── */
+.stNumberInput input,
+.stTextInput input,
+.stSelectbox select,
+.stTextArea textarea {
+    background: #171717 !important;
+    border: 1px solid #262626 !important;
+    color: #fafafa !important;
+    border-radius: 8px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.88rem !important;
+    transition: border-color 0.15s ease !important;
 }
-.stDownloadButton button:hover, .stButton button:hover { background: #1d4ed8 !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2) !important; }
+.stNumberInput input:focus,
+.stTextInput input:focus,
+.stTextArea textarea:focus {
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.12) !important;
+    outline: none !important;
+}
+
+/* ── Botões ── */
+.stDownloadButton button,
+.stButton button {
+    background: #f97316 !important;
+    color: #0a0a0a !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.1px !important;
+    padding: 0.5rem 1.2rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 0 0 0 rgba(249,115,22,0) !important;
+}
+.stDownloadButton button:hover,
+.stButton button:hover {
+    background: #ea6c0a !important;
+    box-shadow: 0 0 20px rgba(249,115,22,0.35) !important;
+    transform: translateY(-1px) !important;
+}
+.stDownloadButton button:active,
+.stButton button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 0 10px rgba(249,115,22,0.2) !important;
+}
+
+/* ── Expander ── */
+.streamlit-expanderHeader {
+    background: #171717 !important;
+    border: 1px solid #262626 !important;
+    border-radius: 8px !important;
+    color: #a3a3a3 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 500 !important;
+    transition: border-color 0.15s ease !important;
+}
+.streamlit-expanderHeader:hover {
+    border-color: #f97316 !important;
+    color: #fafafa !important;
+}
+
+/* ── Slider ── */
+.stSlider [data-baseweb="slider"] div[role="slider"] {
+    background: #f97316 !important;
+    border-color: #f97316 !important;
+}
+.stSlider [data-baseweb="slider"] div[data-testid="stSliderTrackActive"] {
+    background: #f97316 !important;
+}
+
+/* ── Radio ── */
+.stRadio label { color: #a3a3a3 !important; font-size: 0.87rem !important; }
+.stRadio [data-testid="stMarkdownContainer"] p { color: #a3a3a3 !important; }
+
+/* ── Métricas nativas ── */
+[data-testid="stMetricValue"] {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #fafafa !important;
+    font-weight: 700 !important;
+}
+[data-testid="stMetricLabel"] { color: #525252 !important; }
+[data-testid="stMetricDelta"] { color: #f97316 !important; }
+
+/* ── Data editor / table ── */
+.stDataFrame, .stDataEditor {
+    border: 1px solid #262626 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background: #171717 !important;
+}
+
+/* ── Alerts ── */
+.stAlert {
+    border-radius: 10px !important;
+    border: 1px solid #262626 !important;
+    background: #171717 !important;
+}
+
+/* ── Divider ── */
+hr { border-color: #262626 !important; margin: 28px 0 !important; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #262626; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #f97316; }
+
+/* ── Spinner ── */
+.stSpinner > div { border-top-color: #f97316 !important; }
 </style>
 """
 
@@ -122,21 +343,13 @@ COMODOS_PADRAO: list[dict] = [
     {"Nome": "Banheiro",        "Largura (m)": 2.0, "Comprimento (m)": 1.5},
 ]
 
-# Tabela de insumos-base (perfil Intermediário por padrão)
+# Tabela de insumos-base (Simplificada)
 INSUMOS_PADRAO: list[dict] = [
-    {"Insumo": "Mão de Obra - Piso",      "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 3.0},
-    {"Insumo": "Mão de Obra - Alvenaria", "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 6.0},
-    {"Insumo": "Cimento CP II",           "Unidade": "kg",      "Custo Unitário (R$)": 0.85,  "Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 12.0},
-    {"Insumo": "Areia Média Lavada",      "Unidade": "m³",      "Custo Unitário (R$)": 110.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.04},
-    {"Insumo": "Brita 1",                 "Unidade": "m³",      "Custo Unitário (R$)": 130.00,"Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.03},
-    {"Insumo": "Blocos Cerâmicos",        "Unidade": "unidade", "Custo Unitário (R$)": 1.40,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 18.0},
-    {"Insumo": "Reboco Industrializado",  "Unidade": "kg",      "Custo Unitário (R$)": 1.20,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 8.0},
-    {"Insumo": "Impermeabilizante",       "Unidade": "litro",   "Custo Unitário (R$)": 28.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.5},
-    {"Insumo": "Revestimento - Piso",     "Unidade": "m²",      "Custo Unitário (R$)": 75.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 1.05},
-    {"Insumo": "Tinta Acrílica",          "Unidade": "litro",   "Custo Unitário (R$)": 40.00, "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 0.35},
-    {"Insumo": "Elétrica - Pontos",       "Unidade": "ponto",   "Custo Unitário (R$)": 200.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.8},
-    {"Insumo": "Hidráulica - Pontos",     "Unidade": "ponto",   "Custo Unitário (R$)": 250.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.5},
-]
+    {"Insumo": "Mão de Obra Geral",   "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 8.0},
+    {"Insumo": "Cimento CP II",        "Unidade": "kg",      "Custo Unitário (R$)": 0.85,  "Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 12.0},
+    {"Insumo": "Areia Média Lavada",   "Unidade": "m³",      "Custo Unitário (R$)": 110.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.04},
+    {"Insumo": "Brita 1",              "Unidade": "m³",      "Custo Unitário (R$)": 130.00,"Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.03},
+    {"Insumo": "Blocos Cerâmicos",     "Unidade": "unidade", "Custo Unitário (R$)": 1.40,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 18.0},
 
 SUGESTOES_PADRAO: dict = {
     "versao": "1.0",
@@ -288,150 +501,32 @@ def inicializar_estado() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# [F] ALGORITMO HEURÍSTICO DE LAYOUT + PLANTA ABNT (MATPLOTLIB)
-# ═══════════════════════════════════════════════════════════════════════════
+# ── [F] Paleta Matplotlib — Premium Tech Dark Mode ─────────────────────────
+# Substitua as constantes de cor DENTRO de plotar_planta_esquematica():
 
-
-def _calcular_posicoes(comodos: list[dict], gap: float = 0.35) -> list[dict]:
-    """
-    Algoritmo heurístico simples para dispor cômodos em grid adjacente.
-
-    Estratégia: distribui os cômodos em ceil(sqrt(n)) colunas,
-    calculando largura de cada coluna e altura de cada linha a partir
-    das dimensões reais. Sem Bin Packing complexo - zero risco de IndexError.
-
-    Parâmetros
-    ----------
-    comodos : list[dict]
-        Lista com chaves 'Nome', 'Largura (m)', 'Comprimento (m)'.
-    gap : float
-        Espaço entre cômodos em metros.
-
-    Retorna
-    -------
-    list[dict]
-        Lista com as chaves originais acrescidas de 'x' e 'y' (posição de origem).
-    """
-    n = len(comodos)
-    if n == 0:
-        return []
-
-    n_cols = max(1, math.ceil(math.sqrt(n)))
-    n_rows = math.ceil(n / n_cols)
-
-    # Largura máxima por coluna e altura máxima por linha
-    col_widths: list[float] = [0.0] * n_cols
-    row_heights: list[float] = [0.0] * n_rows
-
-    for idx, c in enumerate(comodos):
-        col = idx % n_cols
-        row = idx // n_cols
-        col_widths[col] = max(col_widths[col], float(c.get("Largura (m)", 1.0)))
-        row_heights[row] = max(row_heights[row], float(c.get("Comprimento (m)", 1.0)))
-
-    # Posições acumuladas (origem de cada coluna/linha)
-    x_starts: list[float] = []
-    acc = 0.0
-    for w in col_widths:
-        x_starts.append(acc)
-        acc += w + gap
-
-    y_starts: list[float] = []
-    acc = 0.0
-    for h in row_heights:
-        y_starts.append(acc)
-        acc += h + gap
-
-    resultado: list[dict] = []
-    for idx, c in enumerate(comodos):
-        col = idx % n_cols
-        row = idx // n_cols
-        resultado.append({**c, "x": x_starts[col], "y": y_starts[row]})
-
-    return resultado
-
-
-def _desenhar_cota_horizontal(
-    ax: plt.Axes,
-    x0: float, x1: float, y_cota: float,
-    valor: float, fontsize: float,
-    cor: str = "#4d9fd6",
-) -> None:
-    """
-    Desenha uma linha de cota horizontal no estilo ABNT (traço oblíquo a 45°).
-    """
-    tick = 0.12
-    # Linha principal da cota
-    ax.annotate(
-        "", xy=(x1, y_cota), xytext=(x0, y_cota),
-        arrowprops=dict(arrowstyle="<->", color=cor, lw=0.9),
-        zorder=6,
-    )
-    # Traços oblíquos de limite
-    for xp in (x0, x1):
-        ax.plot([xp - tick / 2, xp + tick / 2],
-                [y_cota - tick / 2, y_cota + tick / 2],
-                color=cor, lw=1.0, zorder=7)
-    ax.text(
-        (x0 + x1) / 2, y_cota - 0.28,
-        f"{valor:.2f} m",
-        ha="center", va="top",
-        fontsize=fontsize, color="#7bbde0",
-        fontfamily="monospace", fontweight="bold", zorder=7,
-    )
-
-
-def _desenhar_cota_vertical(
-    ax: plt.Axes,
-    y0: float, y1: float, x_cota: float,
-    valor: float, fontsize: float,
-    cor: str = "#4d9fd6",
-) -> None:
-    """
-    Desenha uma linha de cota vertical no estilo ABNT (traço oblíquo a 45°).
-    """
-    tick = 0.12
-    ax.annotate(
-        "", xy=(x_cota, y1), xytext=(x_cota, y0),
-        arrowprops=dict(arrowstyle="<->", color=cor, lw=0.9),
-        zorder=6,
-    )
-    for yp in (y0, y1):
-        ax.plot([x_cota - tick / 2, x_cota + tick / 2],
-                [yp - tick / 2, yp + tick / 2],
-                color=cor, lw=1.0, zorder=7)
-    ax.text(
-        x_cota - 0.28, (y0 + y1) / 2,
-        f"{valor:.2f} m",
-        ha="right", va="center",
-        fontsize=fontsize, color="#7bbde0",
-        fontfamily="monospace", fontweight="bold",
-        rotation=90, zorder=7,
-    )
-
+# fig.patch.set_facecolor("#0a0a0a")
+# ax.set_facecolor("#0a0a0a")
+# grade major  → color="#1c1c1c"
+# grade minor  → color="#141414"
+# cor de cota  → "#f97316"   (laranja accent)
+# cor de texto → "#fdba74"   (laranja suave)
+# edgecolor dos cômodos → "#f97316"
+# facecolor dos cômodos → "#171717"  (grafite)
+# hachura dos cômodos   → edgecolor="#262626"
+# bounding box          → edgecolor="#404040"
+# título da figura      → color="#fafafa"
+# rodapé                → color="#404040"
+# spine edges           → "#1c1c1c"
+# tick colors           → "#404040"
 
 def plotar_planta_esquematica(df_comodos: pd.DataFrame) -> Optional[plt.Figure]:
     """
-    Gera a planta baixa esquemática com layout heurístico em grid.
-
-    Aplica:
-    - Fundo escuro estilo blueprint com grade milimetrada
-    - Cada cômodo renderizado com cor e label adaptivo
-    - Cotas ABNT (horizontal + vertical) por cômodo, com anti-colisão de texto
-    - Cotas do bounding box total
-
-    Parâmetros
-    ----------
-    df_comodos : pd.DataFrame
-        DataFrame com colunas 'Nome', 'Largura (m)', 'Comprimento (m)'.
-
-    Retorna
-    -------
-    Optional[plt.Figure]
-        Figura ou None se não houver cômodos válidos.
+    Gera a planta baixa esquemática — tema Premium Tech Dark Mode.
+    Fundo #0a0a0a, cotas laranja #f97316, cômodos grafite #171717.
     """
-    registros = df_comodos.dropna(subset=["Nome", "Largura (m)", "Comprimento (m)"]).to_dict("records")
-    # Filtra dimensões inválidas
+    registros = df_comodos.dropna(
+        subset=["Nome", "Largura (m)", "Comprimento (m)"]
+    ).to_dict("records")
     registros = [
         r for r in registros
         if float(r.get("Largura (m)", 0)) > 0 and float(r.get("Comprimento (m)", 0)) > 0
@@ -440,132 +535,127 @@ def plotar_planta_esquematica(df_comodos: pd.DataFrame) -> Optional[plt.Figure]:
         return None
 
     posicoes = _calcular_posicoes(registros)
-
-    # Bounding box total para dimensionar eixos
     max_x = max(p["x"] + float(p["Largura (m)"]) for p in posicoes)
     max_y = max(p["y"] + float(p["Comprimento (m)"]) for p in posicoes)
 
-    margem = 1.8  # margem para cotas externas
-    fig_w = min(12, max(7, max_x + 2 * margem + 1))
-    fig_h = min(10, max(6, max_y + 2 * margem + 1))
+    margem  = 1.8
+    fig_w   = min(12, max(7, max_x + 2 * margem + 1))
+    fig_h   = min(10, max(6, max_y + 2 * margem + 1))
 
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
-    fig.patch.set_facecolor("#030a15")
-    ax.set_facecolor("#05111e")
+    fig.patch.set_facecolor("#0a0a0a")
+    ax.set_facecolor("#0a0a0a")
 
-    # ── Grade milimetrada ──────────────────────────────────────────────
+    # ── Grade técnica ──────────────────────────────────────────────────
     passo_grade = max(0.5, round(max(max_x, max_y) / 20, 1))
     ax.xaxis.set_minor_locator(ticker.MultipleLocator(passo_grade / 5))
     ax.yaxis.set_minor_locator(ticker.MultipleLocator(passo_grade / 5))
     ax.xaxis.set_major_locator(ticker.MultipleLocator(passo_grade))
     ax.yaxis.set_major_locator(ticker.MultipleLocator(passo_grade))
-    ax.grid(which="major", color="#0c2235", lw=0.5, ls="-")
-    ax.grid(which="minor", color="#071528", lw=0.25, ls="-")
+    ax.grid(which="major", color="#1c1c1c", lw=0.6, ls="-")
+    ax.grid(which="minor", color="#141414", lw=0.25, ls="-")
     ax.set_axisbelow(True)
 
     ax.set_xlim(-margem, max_x + margem)
     ax.set_ylim(-margem, max_y + margem)
     ax.set_aspect("equal")
 
-    # ── Renderização dos cômodos ───────────────────────────────────────
+    # ── Cômodos ───────────────────────────────────────────────────────
     for idx, pos in enumerate(posicoes):
-        w = float(pos["Largura (m)"])
-        h = float(pos["Comprimento (m)"])
+        w    = float(pos["Largura (m)"])
+        h    = float(pos["Comprimento (m)"])
         x, y = pos["x"], pos["y"]
         nome = str(pos.get("Nome", f"Cômodo {idx+1}"))
-        cor_fundo = CORES_COMODOS[idx % len(CORES_COMODOS)]
         area_com = w * h
+        min_dim  = min(w, h)
+        fs_nome  = max(6.0, min(9.5, min_dim * 3.2))
+        fs_dim   = max(5.5, min(8.5,  min_dim * 2.8))
 
-        # Retângulo do cômodo
+        # Retângulo grafite com borda laranja
         rect = mpatches.FancyBboxPatch(
             (x, y), w, h,
             boxstyle="square,pad=0",
-            facecolor=cor_fundo, edgecolor="#3a7ab5",
-            linewidth=2.2, zorder=3,
+            facecolor="#171717",
+            edgecolor="#f97316",
+            linewidth=1.8,
+            zorder=3,
         )
         ax.add_patch(rect)
 
-        # Hachura interna discreta
+        # Hachura interna sutil
         rect_h = plt.Polygon(
             [(x, y), (x+w, y), (x+w, y+h), (x, y+h)],
             closed=True, fill=False, hatch="///",
-            edgecolor="#0d2238", lw=0, zorder=2,
+            edgecolor="#262626", lw=0, zorder=2,
         )
         ax.add_patch(rect_h)
 
-        # ── Labels adaptativos (anti-colisão) ─────────────────────────
-        # Tamanho de fonte proporcional ao menor lado do cômodo
-        min_dim = min(w, h)
-        fs_nome = max(6.0, min(9.5, min_dim * 3.2))
-        fs_dim  = max(5.5, min(8.5, min_dim * 2.8))
-
-        # Nome do cômodo (linha 1)
+        # Labels adaptativos
         ax.text(
-            x + w / 2, y + h / 2 + h * 0.12,
-            nome,
+            x + w / 2, y + h / 2 + h * 0.12, nome,
             ha="center", va="center",
-            fontsize=fs_nome, color="#9dd4f0",
+            fontsize=fs_nome, color="#fafafa",
             fontfamily="monospace", fontweight="bold",
-            zorder=5,
-            clip_on=True,
+            zorder=5, clip_on=True,
         )
-        # Dimensões (linha 2)
         ax.text(
             x + w / 2, y + h / 2 - h * 0.14,
             f"{w:.1f}×{h:.1f} m  |  {area_com:.1f}m²",
             ha="center", va="center",
-            fontsize=fs_dim, color="#5a8ab0",
+            fontsize=fs_dim, color="#737373",
             fontfamily="monospace",
-            zorder=5,
-            clip_on=True,
+            zorder=5, clip_on=True,
         )
 
-        # ── Cotas ABNT por cômodo ─────────────────────────────────────
+        # ── Cotas ABNT por cômodo (laranja) ───────────────────────────
         offset_cota = 0.55
-        # Determina se há espaço para cota inferior (evita sobreposição com bounding box)
-        y_cota_inf = y - offset_cota
-        _desenhar_cota_horizontal(ax, x, x + w, y_cota_inf, w,
-                                   fontsize=max(5.5, fs_dim - 1.0))
-
-        x_cota_esq = x - offset_cota
-        _desenhar_cota_vertical(ax, y, y + h, x_cota_esq, h,
-                                 fontsize=max(5.5, fs_dim - 1.0))
+        _desenhar_cota_horizontal(
+            ax, x, x + w, y - offset_cota, w,
+            fontsize=max(5.5, fs_dim - 1.0), cor="#f97316",
+        )
+        _desenhar_cota_vertical(
+            ax, y, y + h, x - offset_cota, h,
+            fontsize=max(5.5, fs_dim - 1.0), cor="#f97316",
+        )
 
     # ── Bounding box total ─────────────────────────────────────────────
     bb_rect = plt.Polygon(
         [(0, 0), (max_x, 0), (max_x, max_y), (0, max_y)],
         closed=True, fill=False,
-        edgecolor="#1e5a8c", linewidth=1.2,
+        edgecolor="#404040", linewidth=1.0,
         linestyle="--", zorder=1,
     )
     ax.add_patch(bb_rect)
 
-    # Cotas do bounding box total (externas)
+    # Cotas externas do bounding box
     offset_ext = margem * 0.65
-    _desenhar_cota_horizontal(ax, 0, max_x, -offset_ext, max_x,
-                               fontsize=8.5, cor="#2a7abf")
-    _desenhar_cota_vertical(ax, 0, max_y, -offset_ext, max_y,
-                             fontsize=8.5, cor="#2a7abf")
+    _desenhar_cota_horizontal(
+        ax, 0, max_x, -offset_ext, max_x,
+        fontsize=8.5, cor="#f97316",
+    )
+    _desenhar_cota_vertical(
+        ax, 0, max_y, -offset_ext, max_y,
+        fontsize=8.5, cor="#f97316",
+    )
 
     # ── Títulos e rodapé ──────────────────────────────────────────────
     ax.set_title(
-        "PLANTA BAIXA ESQUEMÁTICA - LAYOUT PARAMÉTRICO",
-        color="#4d9fd6", fontfamily="monospace",
+        "PLANTA BAIXA ESQUEMÁTICA — LAYOUT PARAMÉTRICO",
+        color="#fafafa", fontfamily="monospace",
         fontsize=11, fontweight="bold", pad=12,
     )
     fig.text(
         0.5, 0.005,
-        "ObraCalc v2.0  |  Algoritmo Heurístico Grid  |  ABNT NBR 6492  |  Escala: sem escala",
-        ha="center", fontsize=7, color="#1a4060", fontfamily="monospace",
+        "Métrica. MVP v2.0  |  Heurístico Grid  |  ABNT NBR 6492  |  Escala: sem escala",
+        ha="center", fontsize=7, color="#404040", fontfamily="monospace",
     )
 
-    ax.tick_params(colors="#122a3d", labelsize=6.5)
+    ax.tick_params(colors="#404040", labelsize=6.5)
     for spine in ax.spines.values():
-        spine.set_edgecolor("#0c2235")
+        spine.set_edgecolor("#1c1c1c")
 
     plt.tight_layout(pad=1.0)
     return fig
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # [G] GRÁFICO COMPARATIVO DE CUSTO (MATPLOTLIB)
@@ -1115,19 +1205,17 @@ def carregar_csv_insumos(arquivo) -> tuple[Optional[pd.DataFrame], Optional[str]
 
 # ─── J.1  Header e Métricas Rápidas ────────────────────────────────────────
 
-
 def renderizar_header() -> None:
-    """Renderiza o cabeçalho principal com a nova identidade visual Métrica (SaaS)."""
+    """Renderiza o cabeçalho com identidade visual Premium Tech Dark Mode."""
     st.markdown(
-        f"""
+        """
         <div class="oc-header">
-            <h1>Métrica<span>.</span></h1>
-            <p>Inteligência Paramétrica para Cálculo e Orçamento de Obras</p>
+            <h1>🏗️ Métrica<span class="accent">.</span></h1>
+            <p>Sistema Inteligente e Paramétrico para Cálculo e Orçamento de Obras · MVP v2.0</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
 
 def renderizar_cards(metricas: dict, custo_total: float, desperdicio: int) -> None:
     """
