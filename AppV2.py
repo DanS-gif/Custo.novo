@@ -350,6 +350,7 @@ INSUMOS_PADRAO: list[dict] = [
     {"Insumo": "Areia Média Lavada",   "Unidade": "m³",      "Custo Unitário (R$)": 110.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.04},
     {"Insumo": "Brita 1",              "Unidade": "m³",      "Custo Unitário (R$)": 130.00,"Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.03},
     {"Insumo": "Blocos Cerâmicos",     "Unidade": "unidade", "Custo Unitário (R$)": 1.40,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 18.0},
+]
 
 SUGESTOES_PADRAO: dict = {
     "versao": "1.0",
