@@ -37,116 +37,64 @@ from fpdf import FPDF
 from st_aggrid import AgGrid, DataReturnMode, GridOptionsBuilder, GridUpdateMode
 
 st.set_page_config(
-    page_title="ObraCalc · Orçamento Paramétrico",
-    page_icon="🏗️",
+    page_title="Métrica · Orçamento Paramétrico",
+    page_icon="📐",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
 # ═══════════════════════════════════════════════════════════════════════════
-# [B] CSS - BLUEPRINT DARK THEME
+# [B] CSS - MODERN SAAS (TEMA MÉTRICA)
 # ═══════════════════════════════════════════════════════════════════════════
 
 CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-.stApp { background: #060d18; color: #b8ccdc; }
+.stApp { background-color: #f8fafc; color: #0f172a; }
 
-/* ── Header ── */
+/* ── Header Métrica ── */
 .oc-header {
-    background: linear-gradient(160deg,#091524 0%,#0f2035 60%,#091524 100%);
-    border:1px solid #183554; border-radius:14px;
-    padding:26px 36px; margin-bottom:22px; position:relative; overflow:hidden;
-}
-.oc-header::after {
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:
-        repeating-linear-gradient(0deg,transparent,transparent 29px,
-            rgba(24,80,140,.07) 29px,rgba(24,80,140,.07) 30px),
-        repeating-linear-gradient(90deg,transparent,transparent 29px,
-            rgba(24,80,140,.07) 29px,rgba(24,80,140,.07) 30px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 32px 40px; margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 .oc-header h1 {
-    font-family:'Syne Mono',monospace; font-size:2rem; color:#4d9fd6;
-    letter-spacing:3px; margin:0; text-shadow:0 0 24px rgba(77,159,214,.35);
+    font-family: 'Inter', sans-serif; font-size: 2.8rem; font-weight: 800;
+    color: #0f172a; letter-spacing: -1.2px; margin: 0; line-height: 1.1;
 }
-.oc-header p { color:#547a96; margin:5px 0 0; font-size:.9rem; letter-spacing:.5px; }
+.oc-header h1 span { color: #2563eb; } /* Ponto azul estilo SaaS */
+.oc-header p { color: #64748b; margin: 8px 0 0; font-size: 1.05rem; font-weight: 400; letter-spacing: -0.2px;}
 
 /* ── Metric cards ── */
 .oc-card {
-    background:linear-gradient(145deg,#0c1e30,#132840);
-    border:1px solid #1a3d60; border-left:4px solid #4d9fd6;
-    border-radius:10px; padding:18px 22px; margin:6px 0;
+    background: #ffffff; border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb; border-radius: 10px;
+    padding: 20px; margin: 8px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
-.oc-card .lbl { font-family:'Syne Mono',monospace; font-size:.72rem;
-    color:#506e86; text-transform:uppercase; letter-spacing:1.8px; }
-.oc-card .val { font-family:'Syne Mono',monospace; font-size:1.9rem;
-    font-weight:700; color:#4d9fd6; line-height:1.15; }
-.oc-card .sub { font-size:.78rem; color:#3d8a5a; margin-top:3px; }
+.oc-card .lbl { font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; }
+.oc-card .val { font-family: 'JetBrains Mono', monospace; font-size: 1.9rem; font-weight: 700; color: #0f172a; margin-top: 4px; letter-spacing: -1px;}
+.oc-card .sub { font-size: 0.8rem; color: #10b981; margin-top: 4px; font-weight: 500; }
 
-/* ── Suggestion cards ── */
-.sug-card {
-    background:#0c1e30; border:1px solid #1a3d60; border-radius:10px;
-    padding:18px; height:100%;
-}
-.sug-card h4 { font-family:'Syne Mono',monospace; color:#4d9fd6;
-    margin:0 0 10px; font-size:.95rem; }
-.sug-card .badge {
-    display:inline-block; background:#0f2a1a; border:1px solid #1e5c32;
-    color:#4caf70; border-radius:20px; padding:2px 10px;
-    font-size:.72rem; margin:3px 2px 0;
-}
-.sug-card p { color:#8eb0c8; font-size:.84rem; line-height:1.55; margin:8px 0 6px; }
-
-/* ── Abas ── */
-.stTabs [data-baseweb="tab-list"] {
-    background:#060d18; border-bottom:2px solid #183554; gap:3px;
-}
+/* ── Abas e Inputs ── */
+.stTabs [data-baseweb="tab-list"] { background: transparent; border-bottom: 2px solid #e2e8f0; gap: 24px; }
 .stTabs [data-baseweb="tab"] {
-    background:transparent; color:#506e86; border:1px solid transparent;
-    border-radius:8px 8px 0 0; padding:10px 20px;
-    font-family:'Syne Mono',monospace; font-size:.85rem; letter-spacing:.4px;
+    background: transparent; color: #64748b; border: none; padding: 12px 4px;
+    font-weight: 500; font-size: 0.95rem; font-family: 'Inter', sans-serif;
 }
-.stTabs [aria-selected="true"] {
-    background:#0f2035 !important; color:#4d9fd6 !important;
-    border-color:#1a3d60 !important; border-bottom-color:#0f2035 !important;
-}
+.stTabs [aria-selected="true"] { color: #2563eb !important; border-bottom: 2px solid #2563eb !important; background: transparent !important; }
 
-/* ── Inputs ── */
-.stNumberInput input, .stTextInput input, .stSelectbox select {
-    background:#0c1e30 !important; border:1px solid #1a3d60 !important;
-    color:#b8ccdc !important; border-radius:6px !important;
-}
-/* ── Buttons ── */
+.stNumberInput input, .stTextInput input { border-radius: 8px !important; border: 1px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important;}
 .stDownloadButton button, .stButton button {
-    background:linear-gradient(135deg,#122640,#1a3a60) !important;
-    color:#4d9fd6 !important; border:1px solid #1a3d60 !important;
-    border-radius:8px !important; font-family:'Syne Mono',monospace !important;
-    letter-spacing:.4px !important; transition:all .2s !important;
+    background: #2563eb !important; color: #ffffff !important;
+    border: none !important; border-radius: 8px !important;
+    font-weight: 500 !important; font-family: 'Inter', sans-serif !important;
 }
-.stDownloadButton button:hover, .stButton button:hover {
-    background:linear-gradient(135deg,#1a3a60,#1e5080) !important;
-    border-color:#4d9fd6 !important;
-    box-shadow:0 0 14px rgba(77,159,214,.25) !important;
-}
-/* ── Expander ── */
-.streamlit-expanderHeader {
-    background:#0c1e30 !important; border:1px solid #1a3d60 !important;
-    border-radius:8px !important; color:#4d9fd6 !important;
-    font-family:'Syne Mono',monospace !important;
-}
-/* ── Data editor / table ── */
-.stDataFrame, .stDataEditor { border:1px solid #1a3d60 !important;
-    border-radius:8px !important; }
-/* ── Divider ── */
-hr { border-color:#183554 !important; margin:24px 0 !important; }
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-track { background:#060d18; }
-::-webkit-scrollbar-thumb { background:#1a3d60; border-radius:3px; }
+.stDownloadButton button:hover, .stButton button:hover { background: #1d4ed8 !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2) !important; }
 </style>
 """
 
@@ -1169,12 +1117,12 @@ def carregar_csv_insumos(arquivo) -> tuple[Optional[pd.DataFrame], Optional[str]
 
 
 def renderizar_header() -> None:
-    """Renderiza o cabeçalho principal com identidade visual blueprint."""
+    """Renderiza o cabeçalho principal com a nova identidade visual Métrica (SaaS)."""
     st.markdown(
         f"""
         <div class="oc-header">
-            <h1>🏗️ ObraCalc</h1>
-            <p>Sistema Inteligente e Paramétrico para Cálculo e Orçamento de Obras · MVP v2.0</p>
+            <h1>Métrica<span>.</span></h1>
+            <p>Inteligência Paramétrica para Cálculo e Orçamento de Obras</p>
         </div>
         """,
         unsafe_allow_html=True,
