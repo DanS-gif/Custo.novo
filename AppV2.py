@@ -502,32 +502,104 @@ def inicializar_estado() -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ── [F] Paleta Matplotlib — Premium Tech Dark Mode ─────────────────────────
-# Substitua as constantes de cor DENTRO de plotar_planta_esquematica():
+# [F] ALGORITMO HEURÍSTICO DE LAYOUT + PLANTA ABNT (MATPLOTLIB)
+# ═══════════════════════════════════════════════════════════════════════════
 
-# fig.patch.set_facecolor("#0a0a0a")
-# ax.set_facecolor("#0a0a0a")
-# grade major  → color="#1c1c1c"
-# grade minor  → color="#141414"
-# cor de cota  → "#f97316"   (laranja accent)
-# cor de texto → "#fdba74"   (laranja suave)
-# edgecolor dos cômodos → "#f97316"
-# facecolor dos cômodos → "#171717"  (grafite)
-# hachura dos cômodos   → edgecolor="#262626"
-# bounding box          → edgecolor="#404040"
-# título da figura      → color="#fafafa"
-# rodapé                → color="#404040"
-# spine edges           → "#1c1c1c"
-# tick colors           → "#404040"
+def _calcular_posicoes(comodos: list[dict], gap: float = 0.35) -> list[dict]:
+    """Algoritmo heurístico simples para dispor cômodos em grid adjacente."""
+    n = len(comodos)
+    if n == 0:
+        return []
+
+    n_cols = max(1, math.ceil(math.sqrt(n)))
+    n_rows = math.ceil(n / n_cols)
+
+    col_widths: list[float] = [0.0] * n_cols
+    row_heights: list[float] = [0.0] * n_rows
+
+    for idx, c in enumerate(comodos):
+        col = idx % n_cols
+        row = idx // n_cols
+        col_widths[col] = max(col_widths[col], float(c.get("Largura (m)", 1.0)))
+        row_heights[row] = max(row_heights[row], float(c.get("Comprimento (m)", 1.0)))
+
+    x_starts: list[float] = []
+    acc = 0.0
+    for w in col_widths:
+        x_starts.append(acc)
+        acc += w + gap
+
+    y_starts: list[float] = []
+    acc = 0.0
+    for h in row_heights:
+        y_starts.append(acc)
+        acc += h + gap
+
+    resultado: list[dict] = []
+    for idx, c in enumerate(comodos):
+        col = idx % n_cols
+        row = idx // n_cols
+        resultado.append({**c, "x": x_starts[col], "y": y_starts[row]})
+
+    return resultado
+
+
+def _desenhar_cota_horizontal(
+    ax: plt.Axes,
+    x0: float, x1: float, y_cota: float,
+    valor: float, fontsize: float,
+    cor: str = "#ea580c",
+) -> None:
+    """Desenha cota horizontal ABNT adaptada ao Dark Theme SaaS."""
+    tick = 0.12
+    ax.annotate(
+        "", xy=(x1, y_cota), xytext=(x0, y_cota),
+        arrowprops=dict(arrowstyle="<->", color=cor, lw=0.9),
+        zorder=6,
+    )
+    for xp in (x0, x1):
+        ax.plot([xp - tick / 2, xp + tick / 2],
+                [y_cota - tick / 2, y_cota + tick / 2],
+                color=cor, lw=1.0, zorder=7)
+    ax.text(
+        (x0 + x1) / 2, y_cota - 0.28,
+        f"{valor:.2f} m",
+        ha="center", va="top",
+        fontsize=fontsize, color="#fdba74",
+        fontfamily="monospace", fontweight="bold", zorder=7,
+    )
+
+
+def _desenhar_cota_vertical(
+    ax: plt.Axes,
+    y0: float, y1: float, x_cota: float,
+    valor: float, fontsize: float,
+    cor: str = "#ea580c",
+) -> None:
+    """Desenha cota vertical ABNT adaptada ao Dark Theme SaaS."""
+    tick = 0.12
+    ax.annotate(
+        "", xy=(x_cota, y1), xytext=(x_cota, y0),
+        arrowprops=dict(arrowstyle="<->", color=cor, lw=0.9),
+        zorder=6,
+    )
+    for yp in (y0, y1):
+        ax.plot([x_cota - tick / 2, x_cota + tick / 2],
+                [yp - tick / 2, yp + tick / 2],
+                color=cor, lw=1.0, zorder=7)
+    ax.text(
+        x_cota - 0.28, (y0 + y1) / 2,
+        f"{valor:.2f} m",
+        ha="right", va="center",
+        fontsize=fontsize, color="#fdba74",
+        fontfamily="monospace", fontweight="bold",
+        rotation=90, zorder=7,
+    )
+
 
 def plotar_planta_esquematica(df_comodos: pd.DataFrame) -> Optional[plt.Figure]:
-    """
-    Gera a planta baixa esquemática — tema Premium Tech Dark Mode.
-    Fundo #0a0a0a, cotas laranja #f97316, cômodos grafite #171717.
-    """
-    registros = df_comodos.dropna(
-        subset=["Nome", "Largura (m)", "Comprimento (m)"]
-    ).to_dict("records")
+    """Renderiza a planta paramétrica no padrão Premium Tech Dark Mode."""
+    registros = df_comodos.dropna(subset=["Nome", "Largura (m)", "Comprimento (m)"]).to_dict("records")
     registros = [
         r for r in registros
         if float(r.get("Largura (m)", 0)) > 0 and float(r.get("Comprimento (m)", 0)) > 0
@@ -536,128 +608,118 @@ def plotar_planta_esquematica(df_comodos: pd.DataFrame) -> Optional[plt.Figure]:
         return None
 
     posicoes = _calcular_posicoes(registros)
+
     max_x = max(p["x"] + float(p["Largura (m)"]) for p in posicoes)
     max_y = max(p["y"] + float(p["Comprimento (m)"]) for p in posicoes)
 
-    margem  = 1.8
-    fig_w   = min(12, max(7, max_x + 2 * margem + 1))
-    fig_h   = min(10, max(6, max_y + 2 * margem + 1))
+    margem = 1.8
+    fig_w = min(12, max(7, max_x + 2 * margem + 1))
+    fig_h = min(10, max(6, max_y + 2 * margem + 1))
 
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    
+    # Cores Premium Tech Dark
     fig.patch.set_facecolor("#0a0a0a")
     ax.set_facecolor("#0a0a0a")
 
-    # ── Grade técnica ──────────────────────────────────────────────────
+    # Grade estilo engenharia
     passo_grade = max(0.5, round(max(max_x, max_y) / 20, 1))
     ax.xaxis.set_minor_locator(ticker.MultipleLocator(passo_grade / 5))
     ax.yaxis.set_minor_locator(ticker.MultipleLocator(passo_grade / 5))
     ax.xaxis.set_major_locator(ticker.MultipleLocator(passo_grade))
     ax.yaxis.set_major_locator(ticker.MultipleLocator(passo_grade))
-    ax.grid(which="major", color="#1c1c1c", lw=0.6, ls="-")
-    ax.grid(which="minor", color="#141414", lw=0.25, ls="-")
+    ax.grid(which="major", color="#1c1c1c", lw=0.5, ls="-")
+    ax.grid(which="minor", color="#121212", lw=0.25, ls="-")
     ax.set_axisbelow(True)
 
     ax.set_xlim(-margem, max_x + margem)
     ax.set_ylim(-margem, max_y + margem)
     ax.set_aspect("equal")
 
-    # ── Cômodos ───────────────────────────────────────────────────────
     for idx, pos in enumerate(posicoes):
-        w    = float(pos["Largura (m)"])
-        h    = float(pos["Comprimento (m)"])
+        w = float(pos["Largura (m)"])
+        h = float(pos["Comprimento (m)"])
         x, y = pos["x"], pos["y"]
         nome = str(pos.get("Nome", f"Cômodo {idx+1}"))
         area_com = w * h
-        min_dim  = min(w, h)
-        fs_nome  = max(6.0, min(9.5, min_dim * 3.2))
-        fs_dim   = max(5.5, min(8.5,  min_dim * 2.8))
 
-        # Retângulo grafite com borda laranja
+        # Retângulo do cômodo (Grafite)
         rect = mpatches.FancyBboxPatch(
             (x, y), w, h,
             boxstyle="square,pad=0",
-            facecolor="#171717",
-            edgecolor="#f97316",
-            linewidth=1.8,
-            zorder=3,
+            facecolor="#171717", edgecolor="#262626",
+            linewidth=1.5, zorder=3,
         )
         ax.add_patch(rect)
 
-        # Hachura interna sutil
+        # Hachura discreta
         rect_h = plt.Polygon(
             [(x, y), (x+w, y), (x+w, y+h), (x, y+h)],
             closed=True, fill=False, hatch="///",
-            edgecolor="#262626", lw=0, zorder=2,
+            edgecolor="#1f1f1f", lw=0, zorder=2,
         )
         ax.add_patch(rect_h)
 
-        # Labels adaptativos
+        min_dim = min(w, h)
+        fs_nome = max(6.0, min(9.5, min_dim * 3.2))
+        fs_dim  = max(5.5, min(8.5, min_dim * 2.8))
+
+        # Nome (Branco/Gelo)
         ax.text(
-            x + w / 2, y + h / 2 + h * 0.12, nome,
+            x + w / 2, y + h / 2 + h * 0.12,
+            nome,
             ha="center", va="center",
-            fontsize=fs_nome, color="#fafafa",
+            fontsize=fs_nome, color="#e5e5e5",
             fontfamily="monospace", fontweight="bold",
             zorder=5, clip_on=True,
         )
+        # Dimensões (Cinza claro)
         ax.text(
             x + w / 2, y + h / 2 - h * 0.14,
             f"{w:.1f}×{h:.1f} m  |  {area_com:.1f}m²",
             ha="center", va="center",
-            fontsize=fs_dim, color="#737373",
-            fontfamily="monospace",
-            zorder=5, clip_on=True,
+            fontsize=fs_dim, color="#a3a3a3",
+            fontfamily="monospace", zorder=5, clip_on=True,
         )
 
-        # ── Cotas ABNT por cômodo (laranja) ───────────────────────────
         offset_cota = 0.55
-        _desenhar_cota_horizontal(
-            ax, x, x + w, y - offset_cota, w,
-            fontsize=max(5.5, fs_dim - 1.0), cor="#f97316",
-        )
-        _desenhar_cota_vertical(
-            ax, y, y + h, x - offset_cota, h,
-            fontsize=max(5.5, fs_dim - 1.0), cor="#f97316",
-        )
+        y_cota_inf = y - offset_cota
+        _desenhar_cota_horizontal(ax, x, x + w, y_cota_inf, w, fontsize=max(5.5, fs_dim - 1.0))
 
-    # ── Bounding box total ─────────────────────────────────────────────
+        x_cota_esq = x - offset_cota
+        _desenhar_cota_vertical(ax, y, y + h, x_cota_esq, h, fontsize=max(5.5, fs_dim - 1.0))
+
+    # Bounding box global (Laranja Vibrante)
     bb_rect = plt.Polygon(
         [(0, 0), (max_x, 0), (max_x, max_y), (0, max_y)],
         closed=True, fill=False,
-        edgecolor="#404040", linewidth=1.0,
+        edgecolor="#f97316", linewidth=1.2,
         linestyle="--", zorder=1,
     )
     ax.add_patch(bb_rect)
 
-    # Cotas externas do bounding box
     offset_ext = margem * 0.65
-    _desenhar_cota_horizontal(
-        ax, 0, max_x, -offset_ext, max_x,
-        fontsize=8.5, cor="#f97316",
-    )
-    _desenhar_cota_vertical(
-        ax, 0, max_y, -offset_ext, max_y,
-        fontsize=8.5, cor="#f97316",
-    )
+    _desenhar_cota_horizontal(ax, 0, max_x, -offset_ext, max_x, fontsize=8.5, cor="#ea580c")
+    _desenhar_cota_vertical(ax, 0, max_y, -offset_ext, max_y, fontsize=8.5, cor="#ea580c")
 
-    # ── Títulos e rodapé ──────────────────────────────────────────────
     ax.set_title(
-        "PLANTA BAIXA ESQUEMÁTICA — LAYOUT PARAMÉTRICO",
-        color="#fafafa", fontfamily="monospace",
+        "PLANTA BAIXA ESQUEMÁTICA — MÉTRICA",
+        color="#f97316", fontfamily="monospace",
         fontsize=11, fontweight="bold", pad=12,
     )
     fig.text(
         0.5, 0.005,
-        "Métrica. MVP v2.0  |  Heurístico Grid  |  ABNT NBR 6492  |  Escala: sem escala",
-        ha="center", fontsize=7, color="#404040", fontfamily="monospace",
+        "Métrica.app  |  Grid Heurístico  |  Escala: sem escala",
+        ha="center", fontsize=7, color="#525252", fontfamily="monospace",
     )
 
-    ax.tick_params(colors="#404040", labelsize=6.5)
+    ax.tick_params(colors="#262626", labelsize=6.5)
     for spine in ax.spines.values():
         spine.set_edgecolor("#1c1c1c")
 
     plt.tight_layout(pad=1.0)
     return fig
-
+  
 # ═══════════════════════════════════════════════════════════════════════════
 # [G] GRÁFICO COMPARATIVO DE CUSTO (MATPLOTLIB)
 # ═══════════════════════════════════════════════════════════════════════════
