@@ -1574,7 +1574,42 @@ def aba_resultados() -> None:
 
 
 # ─── J.5  Aba 4: Proposta PDF + Admin JSON ────────────────────────────────
-
+ def tx(texto: str) -> str:
+        """Sanitiza texto para compatibilidade com fpdf2 sem fontes externas."""
+        texto = str(texto)
+        substituicoes = {
+            # Acentos minúsculos
+            "ã": "a", "â": "a", "á": "a", "à": "a", "ä": "a",
+            "ê": "e", "é": "e", "è": "e", "ë": "e",
+            "í": "i", "î": "i", "ì": "i",
+            "õ": "o", "ô": "o", "ó": "o", "ò": "o", "ö": "o",
+            "ú": "u", "û": "u", "ù": "u", "ü": "u",
+            "ç": "c", "ñ": "n",
+            # Acentos maiúsculos
+            "Ã": "A", "Â": "A", "Á": "A", "À": "A",
+            "Ê": "E", "É": "E",
+            "Í": "I", "Î": "I",
+            "Õ": "O", "Ô": "O", "Ó": "O",
+            "Ú": "U", "Û": "U",
+            "Ç": "C",
+            # Caracteres tipográficos e Unicode (Os causadores do erro)
+            "—": "-",   # Em dash (o que causou o seu erro)
+            "–": "-",   # En dash
+            "“": '"',   # Aspas curvas
+            "”": '"',   # Aspas curvas
+            "‘": "'",   # Aspa simples
+            "’": "'",   # Aspa simples
+            "•": "-",   # Bullet point
+            "²": "2",   # Metro quadrado
+            "³": "3",   # Metro cúbico
+            "º": ".",   # Ordinal masculino
+            "ª": ".",   # Ordinal feminino
+        }
+        for orig, sub in substituicoes.items():
+            texto = texto.replace(orig, sub)
+            
+        # Filtro de segurança absoluto: remove qualquer caractere que não seja Latin-1
+        return texto.encode('latin-1', 'ignore').decode('latin-1')
 
 def aba_proposta_pdf() -> None:
     """
