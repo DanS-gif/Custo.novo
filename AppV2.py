@@ -1,5 +1,5 @@
 """
-ObraCalc — Sistema Inteligente e Paramétrico para Cálculo e Orçamento de Obras
+ObraCalc - Sistema Inteligente e Paramétrico para Cálculo e Orçamento de Obras
 ===============================================================================
 MVP v2.0  |  Stack: Streamlit · Pandas · st-aggrid · Matplotlib · fpdf2 · JSON
 
@@ -44,7 +44,7 @@ st.set_page_config(
 )
 
 # ═══════════════════════════════════════════════════════════════════════════
-# [B] CSS — BLUEPRINT DARK THEME
+# [B] CSS - BLUEPRINT DARK THEME
 # ═══════════════════════════════════════════════════════════════════════════
 
 CSS = """
@@ -176,18 +176,18 @@ COMODOS_PADRAO: list[dict] = [
 
 # Tabela de insumos-base (perfil Intermediário por padrão)
 INSUMOS_PADRAO: list[dict] = [
-    {"Insumo": "Mão de Obra — Piso",      "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 3.0},
-    {"Insumo": "Mão de Obra — Alvenaria", "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 6.0},
+    {"Insumo": "Mão de Obra - Piso",      "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 3.0},
+    {"Insumo": "Mão de Obra - Alvenaria", "Unidade": "hora",    "Custo Unitário (R$)": 65.00, "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 6.0},
     {"Insumo": "Cimento CP II",           "Unidade": "kg",      "Custo Unitário (R$)": 0.85,  "Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 12.0},
     {"Insumo": "Areia Média Lavada",      "Unidade": "m³",      "Custo Unitário (R$)": 110.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.04},
     {"Insumo": "Brita 1",                 "Unidade": "m³",      "Custo Unitário (R$)": 130.00,"Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.03},
     {"Insumo": "Blocos Cerâmicos",        "Unidade": "unidade", "Custo Unitário (R$)": 1.40,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 18.0},
     {"Insumo": "Reboco Industrializado",  "Unidade": "kg",      "Custo Unitário (R$)": 1.20,  "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 8.0},
     {"Insumo": "Impermeabilizante",       "Unidade": "litro",   "Custo Unitário (R$)": 28.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 0.5},
-    {"Insumo": "Revestimento — Piso",     "Unidade": "m²",      "Custo Unitário (R$)": 75.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 1.05},
+    {"Insumo": "Revestimento - Piso",     "Unidade": "m²",      "Custo Unitário (R$)": 75.00, "Tipo de Aplicação": "Piso/Fundação",    "Índice Técnico / m²": 1.05},
     {"Insumo": "Tinta Acrílica",          "Unidade": "litro",   "Custo Unitário (R$)": 40.00, "Tipo de Aplicação": "Alvenaria/Reboco", "Índice Técnico / m²": 0.35},
-    {"Insumo": "Elétrica — Pontos",       "Unidade": "ponto",   "Custo Unitário (R$)": 200.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.8},
-    {"Insumo": "Hidráulica — Pontos",     "Unidade": "ponto",   "Custo Unitário (R$)": 250.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.5},
+    {"Insumo": "Elétrica - Pontos",       "Unidade": "ponto",   "Custo Unitário (R$)": 200.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.8},
+    {"Insumo": "Hidráulica - Pontos",     "Unidade": "ponto",   "Custo Unitário (R$)": 250.00,"Tipo de Aplicação": "Ambos",            "Índice Técnico / m²": 0.5},
 ]
 
 SUGESTOES_PADRAO: dict = {
@@ -235,7 +235,7 @@ SUGESTOES_PADRAO: dict = {
                 "Formato grande reduz o número de rejuntes, facilita limpeza e oferece "
                 "aparência premium. Indicado para ambientes comerciais e residências de alto padrão."
             ),
-            "economia_estimada": "—",
+            "economia_estimada": "-",
             "tags": ["premium", "durável", "baixa manutenção"],
         },
         {
@@ -252,7 +252,7 @@ SUGESTOES_PADRAO: dict = {
         {
             "categoria": "Tendência 2025",
             "icone": "🏡",
-            "titulo": "Concreto Aparente Polido — Microcimento",
+            "titulo": "Concreto Aparente Polido - Microcimento",
             "descricao": (
                 "Microcimento sobre base existente elimina demolição de revestimentos antigos. "
                 "Reduz entulho, cria estética contemporânea e é aplicável em piso e parede."
@@ -332,7 +332,7 @@ def inicializar_estado() -> None:
         "df_insumos": pd.DataFrame(INSUMOS_PADRAO),
         "pe_direito": 2.80,
         "desperdicio_pct": 10,
-        "nome_projeto": "Projeto Residencial — Exemplo",
+        "nome_projeto": "Projeto Residencial - Exemplo",
     }
     for chave, valor in defaults.items():
         if chave not in st.session_state:
@@ -350,7 +350,7 @@ def _calcular_posicoes(comodos: list[dict], gap: float = 0.35) -> list[dict]:
 
     Estratégia: distribui os cômodos em ceil(sqrt(n)) colunas,
     calculando largura de cada coluna e altura de cada linha a partir
-    das dimensões reais. Sem Bin Packing complexo — zero risco de IndexError.
+    das dimensões reais. Sem Bin Packing complexo - zero risco de IndexError.
 
     Parâmetros
     ----------
@@ -601,7 +601,7 @@ def plotar_planta_esquematica(df_comodos: pd.DataFrame) -> Optional[plt.Figure]:
 
     # ── Títulos e rodapé ──────────────────────────────────────────────
     ax.set_title(
-        "PLANTA BAIXA ESQUEMÁTICA — LAYOUT PARAMÉTRICO",
+        "PLANTA BAIXA ESQUEMÁTICA - LAYOUT PARAMÉTRICO",
         color="#4d9fd6", fontfamily="monospace",
         fontsize=11, fontweight="bold", pad=12,
     )
@@ -779,7 +779,7 @@ def gerar_pdf(
     pdf.set_font("Helvetica", "", 8)
     pdf.set_text_color(40, 70, 100)
     pdf.cell(0, 6,
-             "Sistema Inteligente para Calculo e Orcamento de Obras — MVP v2.0",
+             "Sistema Inteligente para Calculo e Orcamento de Obras - MVP v2.0",
              new_x="LMARGIN", new_y="NEXT")
 
     pdf.ln(12)
@@ -1096,8 +1096,8 @@ def calcular_orcamento(
         custo_total = qtd_desp * cu
 
         linhas.append({
-            "Insumo":              str(row.get("Insumo", "—")),
-            "Unidade":             str(row.get("Unidade", "—")),
+            "Insumo":              str(row.get("Insumo", "-")),
+            "Unidade":             str(row.get("Unidade", "-")),
             "Tipo":                tipo,
             "Base de Cálculo (m²)": round(base, 2),
             "Qtd. Teórica":        round(qtd_teorica, 3),
@@ -1219,7 +1219,7 @@ def renderizar_cards(metricas: dict, custo_total: float, desperdicio: int) -> No
 
 def aba_gerenciador() -> None:
     """
-    Aba 1 — Gerenciador Paramétrico de Cômodos.
+    Aba 1 - Gerenciador Paramétrico de Cômodos.
 
     Permite adicionar/editar cômodos via st.data_editor com num_rows='dynamic'.
     Exibe a planta baixa gerada pelo algoritmo heurístico em tempo real.
@@ -1314,7 +1314,7 @@ def aba_gerenciador() -> None:
                   help="Perímetro × Pé-direito.")
 
     with col_plot:
-        st.markdown("**🏠 Planta Baixa — Layout Heurístico Grid (ABNT)**")
+        st.markdown("**🏠 Planta Baixa - Layout Heurístico Grid (ABNT)**")
         df_valido = st.session_state["comodos"].dropna(
             subset=["Nome", "Largura (m)", "Comprimento (m)"]
         )
@@ -1335,7 +1335,7 @@ def aba_gerenciador() -> None:
 
 def aba_precos() -> None:
     """
-    Aba 2 — Tabela de Preços Locais com AgGrid editável.
+    Aba 2 - Tabela de Preços Locais com AgGrid editável.
 
     Suporta importação/exportação CSV e seleção de margem de desperdício.
     """
@@ -1438,7 +1438,7 @@ def aba_precos() -> None:
 
 def aba_resultados() -> None:
     """
-    Aba 3 — Dashboard de Resultados.
+    Aba 3 - Dashboard de Resultados.
 
     Exibe métricas, tabela de orçamento detalhada e
     gráfico de distribuição de custos por insumo.
@@ -1548,7 +1548,7 @@ def aba_resultados() -> None:
 
     if sugestoes:
         st.markdown("#### 💡 Sugestões de Mercado e Sustentabilidade")
-        st.caption("Dados carregados de `sugestoes_mercado.json` — editável na aba Proposta PDF.")
+        st.caption("Dados carregados de `sugestoes_mercado.json` - editável na aba Proposta PDF.")
         cols = st.columns(min(3, len(sugestoes)))
         for i, sug in enumerate(sugestoes[:6]):
             with cols[i % len(cols)]:
@@ -1558,14 +1558,14 @@ def aba_resultados() -> None:
                 )
                 st.markdown(
                     f"""<div class="sug-card">
-                        <h4>{sug.get('icone','💡')} {sug.get('titulo','—')}</h4>
+                        <h4>{sug.get('icone','💡')} {sug.get('titulo','-')}</h4>
                         <span style="font-size:.72rem;color:#3a6a8a;
                             font-family:\'Syne Mono\',monospace;letter-spacing:1px;">
                             {sug.get('categoria','').upper()}
                         </span>
                         <p>{sug.get('descricao','')}</p>
                         <div style="font-size:.75rem;color:#4caf70;margin-bottom:6px;">
-                            💰 Economia estimada: <b>{sug.get('economia_estimada','—')}</b>
+                            💰 Economia estimada: <b>{sug.get('economia_estimada','-')}</b>
                         </div>
                         {tags_html}
                     </div>""",
@@ -1590,7 +1590,7 @@ def tx(texto: str) -> str:
         "Õ": "O", "Ô": "O", "Ó": "O",
         "Ú": "U", "Û": "U",
         "Ç": "C",
-        "—": "-", "–": "-", "“": '"', "”": '"',
+        "-": "-", "–": "-", "“": '"', "”": '"',
         "‘": "'", "’": "'", "•": "-", "²": "2",
         "³": "3", "º": ".", "ª": "."
     }
@@ -1600,7 +1600,7 @@ def tx(texto: str) -> str:
 
 def aba_proposta_pdf() -> None:
     """
-    Aba 4 — Geração de Proposta PDF e Área do Administrador (JSON).
+    Aba 4 - Geração de Proposta PDF e Área do Administrador (JSON).
 
     Gera documento PDF profissional com capa, planta, orçamento e gráficos.
     Inclui st.expander para edição direta do sugestoes_mercado.json.
@@ -1706,7 +1706,7 @@ def aba_proposta_pdf() -> None:
     st.markdown("---")
 
     # ── Área do Administrador ─────────────────────────────────────────
-    with st.expander("🔧 Área do Administrador — Editar sugestoes_mercado.json", expanded=False):
+    with st.expander("🔧 Área do Administrador - Editar sugestoes_mercado.json", expanded=False):
         st.caption(
             "Edite diretamente o JSON de sugestões de mercado. "
             "As alterações são salvas no arquivo `sugestoes_mercado.json` "
@@ -1788,7 +1788,7 @@ def main() -> None:
     # CSS global
     st.markdown(CSS, unsafe_allow_html=True)
 
-    # Cold start — garante dados iniciais sem sobrescrever edições
+    # Cold start - garante dados iniciais sem sobrescrever edições
     inicializar_estado()
 
     # Garante existência do JSON de sugestões
@@ -1824,7 +1824,7 @@ def main() -> None:
         "font-family:\"Syne Mono\",monospace;'>"
         "ObraCalc MVP v2.0 · Streamlit · Pandas · st-aggrid · Matplotlib · fpdf2 · JSON  |  "
         "Índices de referência: SINAPI / TCPO / PINI  |  "
-        "Valores são estimativas — consulte engenheiro ou arquiteto habilitado."
+        "Valores são estimativas - consulte engenheiro ou arquiteto habilitado."
         "</p>",
         unsafe_allow_html=True,
     )
